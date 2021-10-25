@@ -1,0 +1,1006 @@
+- id: '1589745949179'
+  alias: Notification - Home Assistant - Startup
+  description: ''
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      message: Home Assistant is Online
+    service: notify.telegram
+  mode: single
+- id: '1589826218280'
+  alias: Living room - Xiaomi gateway - Notification
+  description: ''
+  trigger:
+  - platform: state
+    to: home
+    entity_id: device_tracker.xiaomi_gateway
+  - entity_id: device_tracker.xiaomi_gateway
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: "{% if is_state(\"device_tracker.xiaomi_gateway\", \"home\") %}\n \
+        \ Xiaomi Gateway Online\n{% else %}\n  Xiaomi Gateway Offline\n{% endif %}\n"
+    service: notify.telegram
+  mode: single
+- id: '1590129286977'
+  alias: Hallway - Sensor - Front door - Notification
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0002049ad9
+    platform: state
+    to: 'on'
+  - entity_id: binary_sensor.door_window_sensor_158d0002049ad9
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      message: "{% if is_state(\"binary_sensor.door_window_sensor_158d0002049ad9\"\
+        , \"on\") %}\n  Voordeur is open\n{% else %}\n  Voordeur is dicht\n{% endif\
+        \ %}\n"
+    service: notify.telegram
+- id: '1590255440926'
+  alias: Living room - Slide door - Notification
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0002386484
+    platform: state
+    to: 'on'
+  - entity_id: binary_sensor.door_window_sensor_158d0002386484
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      message: "{% if is_state(\"binary_sensor.door_window_sensor_158d0002386484\"\
+        , \"on\") %}\n  Woonkamer - Schuifdeur is open\n{% else %}\n  Woonkamer -\
+        \ Schuifdeur is dicht\n{% endif %}\n"
+    service: notify.telegram
+  mode: single
+- id: '1590255870624'
+  alias: Kitchen - Rice cooker - Notification
+  description: ''
+  trigger:
+  - entity_id: sensor.xiaomi_cooker_stage_name
+    platform: state
+    to: Cooking finished
+  condition: []
+  action:
+  - data:
+      entity_id: media_player.keuken
+      message: Rice is ready to eat
+    service: tts.google_translate_say
+  - data:
+      message: Rijst is klaar!
+    service: telegram_bot.send_message
+- id: '1590263833645'
+  alias: Kitchen - LEDlamp motion - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d0001e05882
+    platform: state
+    to: 'on'
+  condition:
+  - below: '80'
+    condition: numeric_state
+    entity_id: sensor.illumination_158d0001e05882
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764398_switch
+    service: switch.turn_on
+- id: '1590263925635'
+  alias: Kitchen - LEDlamp motion - Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d0001e05882
+    for: 00:01
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764398_switch
+    service: switch.turn_off
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.xiaomi_bulb
+  mode: single
+- id: '1590302071996'
+  alias: Living room - LEDstrip besta - Off
+  description: ''
+  trigger:
+  - at: 01:00
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c776d8b_switch
+    service: switch.turn_off
+- id: besta midnight on
+  alias: Living room - Midnight - Lights - On
+  trigger:
+  - at: 02:30
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+    service: switch.turn_on
+  mode: single
+- id: besta midnight off
+  alias: Living room - Midnight - Lights - Off
+  trigger:
+  - at: 03:00
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+  action:
+  - entity_id: light.ledstrip_besta
+    service: light.turn_off
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+    service: switch.turn_off
+  mode: single
+- id: '1590354061648'
+  alias: Living room - LEDlamp couch - Sunset - On
+  description: ''
+  trigger:
+  - event: sunset
+    offset: -01:00
+    platform: sun
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+    service: switch.turn_on
+- id: '1590354310736'
+  alias: Living room - LEDlamp couch - Off
+  description: ''
+  trigger:
+  - at: '23:00'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+    service: switch.turn_off
+- id: '1590386406290'
+  alias: Living room - Ceiling light - Toggle
+  description: ''
+  trigger:
+  - event_data:
+      click_type: single
+      entity_id: binary_sensor.wall_switch_right_158d0004650119
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - data: {}
+    service: light.toggle
+    target:
+      entity_id: light.0x00158d000420dc36
+  mode: single
+- id: '1590432342967'
+  alias: Living room - LEDstrip besta - On
+  description: ''
+  trigger:
+  - at: '16:00'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c776d8b_switch
+    service: switch.turn_on
+- id: '1590589035985'
+  alias: Living room - Dinner lights - Toggle
+  description: ''
+  trigger:
+  - event_data:
+      click_type: single
+      entity_id: binary_sensor.wall_switch_left_158d0004650119
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - entity_id: light.dinner_lights
+    service: light.toggle
+  mode: single
+- id: '1590849291393'
+  alias: Kitchen - Magic Mirror - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d0001e05882
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data: {}
+    service: script.mm_on
+- id: '1590849349434'
+  alias: Kitchen - Magic Mirror - Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d0001e05882
+    for: 00:03
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data: {}
+    service: script.mm_off
+- id: '1590912929372'
+  alias: Kitchen - Magic Mirror - Notification
+  description: ''
+  trigger:
+  - entity_id: device_tracker.b8_27_eb_62_c7_d3
+    platform: state
+    to: home
+  - entity_id: device_tracker.b8_27_eb_62_c7_d3
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: "{% if is_state(\"device_tracker.b8_27_eb_62_c7_d3\", \"home\") %}\n\
+        \  RPI Display Online\n{% else %}\n  RPI Display Offline\n{% endif %}\n"
+    service: notify.telegram
+- id: '1590945421256'
+  alias: Zigbee2MQTT - z2m - get status
+  description: ''
+  trigger:
+  - event_data:
+      platform: homeassistant
+    event_type: start
+    platform: event
+  condition: []
+  action:
+  - data:
+      payload: status
+      topic: zigbee2mqtt/0x04cf8cdf3c764398/get
+    service: mqtt.publish
+- id: '1594236828408'
+  alias: Living room - LEDstrip besta - Morning - On
+  description: ''
+  trigger:
+  - at: '6:30'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c776d8b_switch
+    service: switch.turn_on
+- id: '1594236880133'
+  alias: Living room - LEDstrip besta - Morning - Off
+  description: ''
+  trigger:
+  - at: 08:00
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c776d8b_switch
+    service: switch.turn_off
+  mode: single
+- id: '1594400631427'
+  alias: Living room - TV - On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: media_player.samsung_q70r
+    to: 'on'
+  condition: []
+  action:
+  - service: media_player.volume_down
+    target:
+      entity_id: media_player.samsung_q70r
+  mode: single
+- id: '1597172482790'
+  alias: Storage - Sensor - Movement - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d0001e561c5
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data: {}
+    entity_id: light.0x842e14fffe16272d_light
+    service: light.turn_on
+- id: '1597172523246'
+  alias: Storage - Sensor - Movement - Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d0001e561c5
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data: {}
+    entity_id: light.0x842e14fffe16272d_light
+    service: light.turn_off
+- id: '1597659591812'
+  alias: Hallway - Day - Light - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.0x00158d00054110b4_occupancy
+    platform: state
+    to: 'on'
+  condition:
+  - after: 06:00
+    condition: time
+    before: '17:59'
+  action:
+  - data:
+      brightness: 50
+    entity_id: light.0x00158d0004313471_light
+    service: light.turn_on
+  mode: single
+- id: '1597659657738'
+  alias: Corridor - Day - Light on
+  description: ''
+  trigger:
+  - platform: state
+    to: 'on'
+    entity_id: binary_sensor.motion_sensor_158d000483c6be
+  condition:
+  - after: 06:00
+    before: '21:00'
+    condition: time
+  action:
+  - data:
+      brightness: 100
+    entity_id: light.0x00158d000403ca89_light
+    service: light.turn_on
+  mode: single
+- id: '1597659724871'
+  alias: Hallway - Sensor - Movement - Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.0x00158d00054110b4_occupancy
+    for: 00:00:30
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data: {}
+    entity_id: light.0x00158d0004313471_light
+    service: light.turn_off
+- id: '1597659766996'
+  alias: Corridor - Sensor - Movement - Off
+  description: ''
+  trigger:
+  - for: 00:00:30
+    platform: state
+    to: 'off'
+    entity_id: binary_sensor.motion_sensor_158d000483c6be
+  condition: []
+  action:
+  - data: {}
+    entity_id: light.0x00158d000403ca89_light
+    service: light.turn_off
+  mode: single
+- id: '1597663121794'
+  alias: Corridor - Night - Light on
+  description: ''
+  trigger:
+  - platform: state
+    to: 'on'
+    entity_id: binary_sensor.motion_sensor_158d000483c6be
+  condition:
+  - after: '21:00'
+    before: 06:00
+    condition: time
+  action:
+  - data:
+      brightness: 10
+    entity_id: light.0x00158d000403ca89_light
+    service: light.turn_on
+  mode: single
+- id: '1601274994488'
+  alias: Living room - Couch light - Toggle
+  description: ''
+  trigger:
+  - event_data:
+      click_type: long
+      entity_id: binary_sensor.wall_switch_right_158d0004650119
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+    service: switch.toggle
+  mode: single
+- id: '1601280177672'
+  alias: Bedroom - Curtain - Set to 50%
+  description: ''
+  trigger:
+  - event_data:
+      click_type: single
+      entity_id: binary_sensor.wall_switch_right_158d000457016d
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - data:
+      position: 60
+    entity_id: cover.curtain_158d00041c0d19
+    service: cover.set_cover_position
+  mode: single
+- id: '1601280634920'
+  alias: Living room - Curtain - Trigger
+  description: ''
+  trigger:
+  - event_data:
+      click_type: long_both
+      entity_id: binary_sensor.wall_switch_both_158d0004650119
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - service: automation.trigger
+    data: {}
+    entity_id: automation.bedroom_close_curtain
+  mode: single
+- id: '1601280844697'
+  alias: Kitchen - Ceiling light - Toggle
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: a5de5908940045e1785b3f7836ca18b3
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000282a3b9 action_single
+  condition: []
+  action:
+  - data: {}
+    service: light.toggle
+    target:
+      entity_id:
+      - light.xiaomi_bulb
+  mode: single
+- id: '1602569980814'
+  alias: Hallway - Evening - Light - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.0x00158d00054110b4_occupancy
+    platform: state
+    to: 'on'
+  condition:
+  - after: '18:00'
+    condition: time
+    before: '21:00'
+  action:
+  - data:
+      brightness: 30
+    entity_id: light.0x00158d0004313471_light
+    service: light.turn_on
+  mode: single
+- id: '1602748391001'
+  alias: Living room - LEDlamp couch - Morning - Off
+  description: ''
+  trigger:
+  - platform: time
+    at: 09:00:00
+  condition:
+  - condition: state
+    entity_id: switch.0x04cf8cdf3c764470_switch
+    state: 'on'
+  action:
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+  mode: single
+- id: '1602838928000'
+  alias: Kidsroom - Floorlamp - Toggle
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 9c96d6b00f8d11ebb369e35e71104d88
+    type: action
+    subtype: single
+    discovery_id: 0x00158d00041880a0 action_single
+  condition: []
+  action:
+  - service: light.toggle
+    data:
+      brightness_pct: 50
+    target:
+      entity_id: light.0x00158d000420dba3_light
+  mode: single
+- id: hacs_new_repo
+  alias: Notification - When something is added to HACS
+  trigger:
+    platform: event
+    event_type: hacs/repository
+    event_data:
+      action: registration
+  condition:
+    condition: template
+    value_template: '{{ trigger.event.data.repository is defined }}'
+  action:
+    service: persistent_notification.create
+    data_template:
+      title: New repository in HACS
+      message: '{% set repo = trigger.event.data.repository %} {% set id = trigger.event.data.repository_id
+        %} [{{ repo }}](/hacs/repository/{{ id }}) was just added to HACS.'
+- id: hacs_updates
+  alias: Notification - When there are updates pending in HACS
+  trigger:
+    platform: state
+    entity_id: sensor.hacs
+  condition:
+  - condition: template
+    value_template: '{{ states(trigger.entity_id) != ''unknown''}}'
+  - condition: template
+    value_template: '{{ (states(trigger.entity_id) | float) != 0}}'
+  action:
+    service: persistent_notification.create
+    data_template:
+      title: Updates pending in HACS
+      message: "{% for repo in state_attr(trigger.entity_id, 'repositories') %}\n\
+        \  **{{ repo.display_name }}** _{{ repo[\"installed_version\"] }}_ -> _{{\
+        \ repo[\"available_version\"] }}_\n{% endfor %}"
+- id: '1603606519566'
+  alias: Living room - Curtain - Open
+  description: ''
+  trigger:
+  - platform: time
+    at: 08:00:00
+  condition: []
+  action:
+  - service: cover.set_cover_position
+    data:
+      position: 100
+    entity_id: cover.curtain_158d00041c847d
+  mode: single
+- id: '1603606622037'
+  alias: Living room - Curtain - Close
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+  condition: []
+  action:
+  - service: cover.set_cover_position
+    data:
+      position: 0
+    target:
+      entity_id: cover.curtain_158d00041c847d
+  mode: single
+- id: '1603606745756'
+  alias: Bedroom - Curtain - Close
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+  condition: []
+  action:
+  - service: cover.set_cover_position
+    data:
+      position: 0
+    target:
+      entity_id: cover.curtain_158d00041c0d19
+  mode: single
+- id: '1603607217804'
+  alias: Bedroom - Curtain - Open
+  description: ''
+  trigger:
+  - platform: time
+    at: 09:00:00
+  condition: []
+  action:
+  - service: cover.set_cover_position
+    data:
+      position: 60
+    entity_id: cover.curtain_158d00041c0d19
+  mode: single
+- id: '1603781166873'
+  alias: Living room - Xiaomi gateway - On
+  description: ''
+  trigger:
+  - platform: time
+    at: '23:00'
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.gateway_light_7811dcb8b670
+  mode: single
+- id: '1603781214444'
+  alias: Living room - Xiaomi gateway - Off
+  description: ''
+  trigger:
+  - platform: time
+    at: 06:00
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.gateway_light_7811dcb8b670
+  mode: single
+- id: '1603781405724'
+  alias: Living room - Xiaomi vacuum
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:30
+  condition:
+  - condition: time
+    weekday:
+    - tue
+    - thu
+    - sun
+  action:
+  - service: vacuum.start
+    data: {}
+    entity_id: vacuum.xiaomi_vacuum
+  - service: notify.telegram
+    data:
+      title: Xiaomi Vacuum
+      message: Cleaning started
+  - service: cover.set_cover_position
+    data:
+      position: 100
+    target:
+      entity_id:
+      - cover.curtain_158d00041c0d19
+      - cover.curtain_158d00041c847d
+  mode: single
+- id: '1604004218936'
+  alias: Office - Floorlamp - Toggle
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.0x00158d00041880a0_click
+    to: single
+  condition: []
+  action:
+  - service: light.toggle
+    data: {}
+    target:
+      entity_id: light.xiaomi_yeelight
+  mode: single
+- id: '1604145361713'
+  alias: Notification - DSMR Remote Logger
+  description: ''
+  trigger:
+  - entity_id: device_tracker.rpi_dsmr
+    platform: state
+    to: home
+  - entity_id: device_tracker.rpi_dsmr
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: "{% if is_state(\"device_tracker.rpi_dsmr\", \"home\") %}\n  DSMR Online\n\
+        {% else %}\n  DSMR Offline\n{% endif %}\n"
+    service: notify.telegram
+  mode: single
+- id: '1604503289972'
+  alias: Living Room - Thermostat - Night Mode
+  description: ''
+  trigger:
+  - platform: time
+    at: '18:00'
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: 17
+    entity_id: climate.anna
+  mode: single
+- id: '1610602570527'
+  alias: Kirana On
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:00
+  condition:
+  - condition: time
+    weekday:
+    - wed
+    - thu
+  action:
+  - service: light.turn_on
+    data: {}
+    entity_id: light.0x00158d000420dba3_light
+  - service: switch.turn_on
+    data: {}
+    entity_id: switch.0x04cf8cdf3c764470_switch
+  - service: cover.set_cover_position
+    data:
+      position: 60
+    target:
+      entity_id:
+      - cover.curtain_158d00041c847d
+      - cover.curtain_158d00041c0d19
+  mode: single
+- id: '1610602612289'
+  alias: Kirana Off
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:15
+  condition:
+  - condition: time
+    weekday:
+    - wed
+    - thu
+  action:
+  - service: light.turn_off
+    data: {}
+    entity_id: light.0x00158d000420dba3_light
+  mode: single
+- id: '1611475825377'
+  alias: Kidsroom - Floorlamp - Set to 90%
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 9c96d6b00f8d11ebb369e35e71104d88
+    type: action
+    subtype: hold
+    discovery_id: 0x00158d00041880a0 action_hold
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: 90
+    entity_id: light.0x00158d000420dba3_light
+  mode: single
+- id: '1611475875633'
+  alias: Bedroom - Ceiling light - Start Sunset
+  description: ''
+  trigger:
+  - event_data:
+      click_type: double
+      entity_id: binary_sensor.wall_switch_left_158d000457016d
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - data: {}
+    entity_id: light.0x842e14fffe13704d_light
+    service: script.sunset_bedroom
+  mode: single
+- id: '1611937871159'
+  alias: Kidsroom - Floorlamp - Start Sunset
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 9c96d6b00f8d11ebb369e35e71104d88
+    type: action
+    subtype: double
+    discovery_id: 0x00158d00041880a0 action_double
+  condition: []
+  action:
+  - service: script.sunset_kidsroom
+    data: {}
+    entity_id: light.0x00158d000420dba3_light
+  mode: single
+- id: '1611938297606'
+  alias: Bedroom - Ceiling light - Set to 90%
+  description: ''
+  trigger:
+  - event_data:
+      click_type: long
+      entity_id: binary_sensor.wall_switch_left_158d000457016d
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - data:
+      brightness_pct: 90
+    entity_id: light.0x842e14fffe13704d_light
+    service: light.turn_on
+  mode: single
+- id: '1615531660537'
+  alias: Bedroom - Slide door - Notification
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d000242e9eb
+    platform: state
+    to: 'on'
+  - entity_id: binary_sensor.door_window_sensor_158d000242e9eb
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      message: "{% if is_state(\"binary_sensor.door_window_sensor_158d000242e9eb\"\
+        , \"on\") %}\n  Slaapkamer - Schuifdeur is open\n{% else %}\n  Slaapkamer\
+        \ - Schuifdeur is dicht\n{% endif %}\n"
+    service: notify.telegram
+  mode: single
+- id: '1616269241099'
+  alias: Hallway - Night - Light - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.0x00158d000483c6be_occupancy
+    platform: state
+    to: 'on'
+  condition:
+  - after: '21:00'
+    before: 05:59
+    condition: time
+  action:
+  - data:
+      brightness: 10
+    entity_id: light.0x00158d0004313471_light
+    service: light.turn_on
+  mode: single
+- id: '1619542756979'
+  alias: Nobody Home
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: person.danh_nguyen
+    for: 00:10
+    to: not_home
+  - platform: state
+    entity_id: person.citra_ayu_wardani
+    to: not_home
+    for: 00:10
+  condition:
+  - condition: state
+    entity_id: media_player.samsung_q70r
+    state: 'on'
+    for: 00:05
+  action:
+  - service: telegram_bot.send_message
+    data:
+      message: TV staat nog aan
+  mode: single
+- id: '1619966695883'
+  alias: Toilet - Day - Light on
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d000353e12e
+    platform: state
+    to: 'on'
+  condition:
+  - after: 06:00
+    before: '21:00:00'
+    condition: time
+  action:
+  - data:
+      brightness: 75
+    service: light.turn_on
+    target:
+      entity_id:
+      - light.xiaomi_philips_downlight
+  mode: single
+- id: '1619966738959'
+  alias: Toilet - Sensor - Movement - Light - Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d000353e12e
+    for: 00:00:30
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data: {}
+    service: light.turn_off
+    target:
+      entity_id: light.xiaomi_philips_downlight
+  mode: single
+- id: '1619966788257'
+  alias: Toilet - Night - Light on
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor_158d000353e12e
+    platform: state
+    to: 'on'
+  condition:
+  - after: '21:00'
+    before: 06:00:00
+    condition: time
+  action:
+  - data:
+      brightness: 10
+    service: light.turn_on
+    target:
+      entity_id:
+      - light.xiaomi_philips_downlight
+  mode: single
+- id: '1619982183492'
+  alias: Bedroom - Ceiling light - Toggle
+  description: ''
+  trigger:
+  - event_data:
+      click_type: single
+      entity_id: binary_sensor.wall_switch_left_158d000457016d
+    event_type: xiaomi_aqara.click
+    platform: event
+  condition: []
+  action:
+  - service: light.toggle
+    data:
+      brightness_pct: 10
+    target:
+      entity_id: light.0x842e14fffe13704d_light
+  mode: single
+- id: '1622987605876'
+  alias: Notification - Low battery
+  description: ''
+  use_blueprint:
+    path: LRvdLinden/low-battery-level-detection-notification-for-all-battery-sensors.yaml
+    input:
+      actions:
+      - service: notify.telegram
+        data:
+          message: 'Low battery warning for: {{sensors|replace(", ", "\n")}}'
+- id: '1626673835774'
+  alias: Living room - Morning - Curtain to 50%
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:30
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - wed
+    - fri
+    - sat
+  action:
+  - service: cover.set_cover_position
+    data:
+      position: 60
+    target:
+      entity_id: cover.curtain_158d00041c847d
+  mode: single
+- id: '1635178842430'
+  alias: Living room - Purifier - Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0002386484
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - service: fan.turn_off
+    target:
+      entity_id: fan.mi_air_purifier_3_3h
+  mode: single
+- id: '1635178877096'
+  alias: Living room - Purifier - On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0002386484
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - service: fan.turn_on
+    target:
+      entity_id: fan.mi_air_purifier_3_3h
+  mode: single

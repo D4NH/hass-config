@@ -1,0 +1,161 @@
+mm_on:
+  alias: Turn MM on
+  sequence:
+  - service: shell_command.magic_mirror_on
+mm_off:
+  alias: Turn MM off
+  sequence:
+  - service: shell_command.magic_mirror_off
+# soundbar_toggle:
+#   alias: Turn on/off soundbar
+#   sequence:
+#   - service: remote.send_command
+#     entity_id: remote.xiaomi_universal_remote
+#     data:
+#       command:
+#       - Z6VJAC0CAAADAwAA9AUAAI0GAACKEQAAbLYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAwMAAwAAAAADAwADAAAAAhMDAwAAAAMAAAAAAwMDBQRDAA
+# tv_toggle:
+#   alias: Turn on/off TV
+#   sequence:
+#   - service: remote.send_command
+#     entity_id: remote.xiaomi_universal_remote
+#     data:
+#       command:
+#       - Z6XNAEkAAAArAgAATQIAALQGAAB4EQAArxEAAOUbAAD0lwAAFLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUMTExISEhISExMTEhISEhISExMSEhMTExMSEhMTEhISGBVDExMSEhISEhMTExISEhISEhMTEhITExMTEhITExISEhcWBUMTExISEhISExMTEhISEhISExMSEhMTExMSEhMTEhISEB
+sunset_bedroom:
+  alias: Sunset Bedroom
+  sequence:
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 100
+    - delay:
+        minutes: 3
+    - condition: state
+      entity_id: light.0x00158d000420dba3_light
+      state: 'on'
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 90
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 80
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 70
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 60
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 50
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 40
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 30
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 20
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x842e14fffe13704d_light
+      data:
+        brightness_pct: 10
+    - delay:
+        minutes: 3
+    - service: light.turn_off
+      entity_id: light.0x842e14fffe13704d_light
+  mode: single
+  icon: mdi:weather-sunset-down
+sunset_kidsroom:
+  alias: Sunset Kidsroom
+  sequence:
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 100
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 90
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 80
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 70
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 60
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 50
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 40
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 30
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 20
+    - delay:
+        minutes: 3
+    - service: light.turn_on
+      entity_id: light.0x00158d000420dba3_light
+      data:
+        brightness_pct: 10
+    - delay:
+        minutes: 3
+    - service: light.turn_off
+      entity_id: light.0x00158d000420dba3_light
+  mode: single
+  icon: mdi:weather-sunset-down

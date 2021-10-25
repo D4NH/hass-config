@@ -1,0 +1,221 @@
+###################################################
+#                                                 #
+#     Home Assistant Main Configuration File      #
+#                                                 #
+###################################################
+
+# automation:
+# cloud:
+counter:
+dhcp:
+# energy:
+frontend:
+  themes: !include_dir_merge_named themes
+homeassistant:
+  packages: !include_dir_named packages
+  customize: !include customize.yaml
+  allowlist_external_dirs: '/config/recordings'
+history:
+  exclude: 
+    domains:
+      - automation
+      - updater
+    entities:
+      - sun.sun
+input_boolean:
+  # hikvision_motion_detected:
+  #   name: HikVision - Motion detected
+  #   icon: mdi:eye
+input_datetime:
+input_number:
+input_select:
+input_text:
+# logbook:
+# map:
+# media_source:
+# mobile_app:
+# my:
+network:
+panel_iframe:
+  editor:
+    title: 'Editor'
+    icon: mdi:wrench
+    url: 'https://hass.danhnguyen.nl/code-server/'
+person:
+recorder:
+  db_url: !secret postgres_url
+  purge_keep_days: 365
+  exclude:
+    domains:
+      - automation
+      - updater
+      - light
+    entities:
+      - sun.sun
+# scene:
+# script:
+ssdp:
+sun:
+system_health:
+# tag:
+timer:
+tts:
+  - platform: google_translate
+# usb:
+updater:
+webhook:
+zeroconf:
+# zone:
+
+####################################################
+#                                                  #
+#                     Devices                      #
+#                                                  #
+####################################################
+
+camera:
+  - platform: generic
+    name: Hikvision
+    verify_ssl: false
+    username: !secret hikvision_user
+    password: !secret hikvision_pwd
+    still_image_url: !secret hikvision_image
+    stream_source: !secret hikvision_rtsp
+
+fan:
+  - platform: xiaomi_miio_fan
+    name: Xiaomi Smart Fan
+    host: !secret xiaomi_fan_ip
+    token: !secret xiaomi_fan_token
+  - platform: xiaomi_miio_airpurifier
+    name: Mi Air Purifier 3/3H
+    host: !secret xiaomi_purifier_ip
+    token: !secret xiaomi_purifier_token
+    model: zhimi.airpurifier.mb3
+
+google_assistant:
+  project_id: hassio-213013
+  service_account: !include HassIO-fe66053067fe.json
+  report_state: true
+  exposed_domains:
+    - cover
+    - vacuum
+    - light
+    - switch
+    - fan
+    - climate
+    - sensor
+  entity_config:
+    light.gateway_light_7811dcb8b670:
+      expose: false
+    light.0xccccccfffe8abc2f_light:
+      expose: false
+    light.0xccccccfffe58d568:
+      expose: false
+    light.0x14b457fffe9441f3_light:
+      expose: false
+    switch.0x04cf8cdf3c764470_switch:
+      name: Couch light
+    switch.0x04cf8cdf3c764398_switch:
+      expose: false
+    switch.zigbee2mqtt_main_join:
+      expose: false
+    light.0x842e14fffe16272d_light:
+      expose: false
+    light.0x00158d000403ca89_light:
+      expose: false
+    light.0x00158d0004313471_light:
+      expose: false
+    sensor.0x00158d00041880a0_action:
+      expose: false
+    light.toilet_light_2:
+      expose: false
+
+hacs:
+  token: !secret hacs_token
+  sidepanel_title: HACS
+  sidepanel_icon: mdi:alpha-c-box
+
+influxdb:
+  host: !secret ion_pc_ip
+  exclude:
+    domains:
+      - automation
+
+light:
+  - platform: group
+    name: Dinner Lights
+    entities:
+      - light.0x14b457fffe9441f3_light
+      - light.0xccccccfffe58d568
+      - light.0xccccccfffe8abc2f_light
+  - platform: xiaomi_miio_philipslight
+    name: Xiaomi Philips Downlight
+    host: !secret xiaomi_philips_downlight_ip
+    token: !secret xiaomi_philips_downlight_token
+    model: philips.light.downlight
+      
+mqtt:
+  discovery: true
+  broker: !secret ion_pc_ip
+  port: !secret mqtt_port
+  birth_message:
+    topic: 'hass/status'
+    payload: 'online'
+  will_message:
+    topic: 'hass/status'
+    payload: 'offline'
+
+notify:
+  - platform: telegram
+    name: telegram
+    chat_id: !secret telegram_chat_id  
+
+rdw:
+  - plate: !secret kenteken_auto
+    name: "Suzuki Swift"
+    dateformat: '%d %b %Y'
+    binary_sensors:
+      - insured
+    sensors:
+      - expdate
+      - recall
+
+shell_command:
+  magic_mirror_on: 'ssh pi@192.168.0.127 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i .ssh/id_rsa_rpi_display "/home/pi/scripts/on.sh"'
+  magic_mirror_off: 'ssh pi@192.168.0.127 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i .ssh/id_rsa_rpi_display "/home/pi/scripts/off.sh"'
+
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_chat_token
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+
+vacuum:
+  - platform: miio2
+    host: !secret xiaomi_vacuum_ip
+    token: !secret xiaomi_vacuum_token
+    name: Xiaomi Vacuum
+
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - key: !secret xiaomi_gateway_key
+
+# remote:
+#   - platform: xiaomi_miio
+#     name: Xiaomi Universal Remote
+#     host: 
+#     token: !secret xiaomi_irremote_key
+
+# xiaomi_miio_cooker:
+#   name: Xiaomi Rice Cooker
+#   host: 
+#   token: !secret xiaomi_rice_key
+#   model: chunmi.cooker.normal2
+
+group: !include_dir_merge_named groups/
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
