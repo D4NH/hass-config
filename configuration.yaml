@@ -55,6 +55,7 @@ recorder:
 # scene:
 # script:
 ssdp:
+stream:
 sun:
 system_health:
 # tag:
@@ -82,6 +83,12 @@ camera:
     still_image_url: !secret hikvision_image
     stream_source: !secret hikvision_rtsp
 
+binary_sensor:
+  - platform: hikvision
+    host: !secret hikvision_ip
+    username: !secret hikvision_user
+    password: !secret hikvision_pwd
+
 fan:
   - platform: xiaomi_miio_fan
     name: Xiaomi Smart Fan
@@ -99,6 +106,7 @@ google_assistant:
   report_state: true
   exposed_domains:
     - cover
+    - camera
     - vacuum
     - light
     - switch
@@ -128,7 +136,25 @@ google_assistant:
       expose: false
     sensor.0x00158d00041880a0_action:
       expose: false
-    light.toilet_light_2:
+    light.xiaomi_philips_downlight:
+      expose: false
+    sensor.refrigerator_fridge_temp: 
+      expose: false
+    sensor.refrigerator_freezer_temp: 
+      expose: false
+    switch.refrigerator_express_mode:
+      expose: false
+    climate.refrigerator_freezer:
+      expose: false
+    climate.refrigerator_fridge:
+      expose: false
+    sensor.anna_setpoint:
+      expose: false
+    sensor.anna_outdoor_temperature:
+      expose: false
+    sensor.anna_temperature:
+      expose: false
+    sensor.0x04cf8cdf3c776d8b_temperature:
       expose: false
 
 hacs:

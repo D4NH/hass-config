@@ -106,11 +106,6 @@
   - data: {}
     entity_id: switch.0x04cf8cdf3c764398_switch
     service: switch.turn_off
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id:
-      - light.xiaomi_bulb
   mode: single
 - id: '1590302071996'
   alias: Living room - LEDstrip besta - Off
@@ -857,17 +852,19 @@
     service: light.turn_on
   mode: single
 - id: '1619542756979'
-  alias: Nobody Home
+  alias: Notification - Nobody Home
   description: ''
   trigger:
   - platform: state
-    entity_id: person.danh_nguyen
-    for: 00:10
+    entity_id:
+    - person.danh_nguyen
+    - person.citra_ayu_wardani
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
     to: not_home
-  - platform: state
-    entity_id: person.citra_ayu_wardani
-    to: not_home
-    for: 00:10
   condition:
   - condition: state
     entity_id: media_player.samsung_q70r
@@ -1003,4 +1000,62 @@
   - service: fan.turn_on
     target:
       entity_id: fan.mi_air_purifier_3_3h
+  mode: single
+- id: '1635492392352'
+  alias: Notification - Vacation Mode - On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.vacation_mode
+    to: 'on'
+  condition: []
+  action:
+  - service: automation.turn_off
+    target:
+      entity_id: automation.xiaomi_vacuum_start_cleaning
+  - service: automation.turn_on
+    target:
+      entity_id: automation.notification_motion_detected
+  - service: notify.telegram
+    data:
+      message: Vacation Mode On
+  mode: single
+- id: '1635501196148'
+  alias: Notification - Motion Detected
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.motion_sensor_158d0001e05882
+    - binary_sensor.motion_sensor_158d0001e561c5
+    - binary_sensor.motion_sensor_158d000353e12e
+    - binary_sensor.motion_sensor_158d000483c6be
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.telegram
+    data:
+      message: Motion detected
+  - service: telegram_bot.send_photo
+    data:
+      url: https://hass.danhnguyen.nl/api/camera_proxy/camera.hikvision?token=0cea11a3b03ecab744d840751d67948d8e7b9ef540a4d8b45a6d5f1f84ab49d3
+  mode: single
+- id: '1635501380570'
+  alias: Notification - Vacation Mode - Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.vacation_mode
+    to: 'off'
+  condition: []
+  action:
+  - service: automation.turn_on
+    target:
+      entity_id: automation.xiaomi_vacuum_start_cleaning
+  - service: automation.turn_off
+    target:
+      entity_id: automation.notification_motion_detected
+  - service: notify.telegram
+    data:
+      message: Vacation Mode Off
   mode: single
