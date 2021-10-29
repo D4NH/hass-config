@@ -1015,7 +1015,9 @@
       entity_id: automation.xiaomi_vacuum_start_cleaning
   - service: automation.turn_on
     target:
-      entity_id: automation.notification_motion_detected
+      entity_id:
+      - automation.notification_motion_detected
+      - automation.notification_camera_motion
   - service: notify.telegram
     data:
       message: Vacation Mode On
@@ -1054,8 +1056,30 @@
       entity_id: automation.xiaomi_vacuum_start_cleaning
   - service: automation.turn_off
     target:
-      entity_id: automation.notification_motion_detected
+      entity_id:
+      - automation.notification_motion_detected
+      - automation.notification_camera_motion
   - service: notify.telegram
     data:
       message: Vacation Mode Off
+  mode: single
+- id: '1635505380856'
+  alias: Notification - Camera - Motion
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.hikvision_ds_2cd3345_i_motion
+    to: 'on'
+  condition: []
+  action:
+  - service: camera.record
+    target:
+      entity_id: camera.hikvision
+    data:
+      lookback: 10
+      duration: 20
+      filename: /config/recordings/{{ now().strftime("%Y%m%d-%H%M%S") }}.mp4
+  - service: notify.telegram
+    data:
+      message: Motion recorded
   mode: single
