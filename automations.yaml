@@ -753,7 +753,7 @@
     entity_id: light.0x00158d000420dba3_light
   mode: single
 - id: '1611475825377'
-  alias: Kidsroom - Floorlamp - Set to 90%
+  alias: Kidsroom - Floorlamp - Set to 100%
   description: ''
   trigger:
   - platform: device
@@ -766,8 +766,9 @@
   action:
   - service: light.turn_on
     data:
-      brightness_pct: 90
-    entity_id: light.0x00158d000420dba3_light
+      brightness_pct: 100
+    target:
+      entity_id: light.0x00158d000420dba3_light
   mode: single
 - id: '1611475875633'
   alias: Bedroom - Ceiling light - Start Sunset
@@ -1027,11 +1028,7 @@
   description: ''
   trigger:
   - platform: state
-    entity_id:
-    - binary_sensor.motion_sensor_158d0001e05882
-    - binary_sensor.motion_sensor_158d0001e561c5
-    - binary_sensor.motion_sensor_158d000353e12e
-    - binary_sensor.motion_sensor_158d000483c6be
+    entity_id: binary_sensor.motion_sensor_158d0001e05882,binary_sensor.motion_sensor_158d0001e561c5,binary_sensor.motion_sensor_158d000353e12e,binary_sensor.motion_sensor_158d000483c6be,binary_sensor.hikvision_ds_2cd3345_i_motion
     to: 'on'
   condition: []
   action:
@@ -1040,7 +1037,7 @@
       message: Motion detected
   - service: telegram_bot.send_photo
     data:
-      url: https://hass.danhnguyen.nl/api/camera_proxy/camera.hikvision?token=0cea11a3b03ecab744d840751d67948d8e7b9ef540a4d8b45a6d5f1f84ab49d3
+      url: https://hass.danhnguyen.nl/api/camera_proxy/camera.hikvision?token=7d695a571880d10eae65d67cb37bbe3b1c8e221a29c982ab1741b980fa356013
   mode: single
 - id: '1635501380570'
   alias: Notification - Vacation Mode - Off
@@ -1076,10 +1073,16 @@
     target:
       entity_id: camera.hikvision
     data:
-      lookback: 10
-      duration: 20
-      filename: /config/recordings/{{ now().strftime("%Y%m%d-%H%M%S") }}.mp4
-  - service: notify.telegram
+      duration: 15
+      filename: /config/recordings/latest.mp4
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - service: telegram_bot.send_video
     data:
-      message: Motion recorded
+      file: /config/recordings/latest.mp4
+      caption: Motion recorded
+      timeout: 1000
   mode: single

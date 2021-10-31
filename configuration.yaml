@@ -195,7 +195,7 @@ mqtt:
 notify:
   - platform: telegram
     name: telegram
-    chat_id: !secret telegram_chat_id  
+    chat_id: !secret telegram_group_id  
 
 rdw:
   - plate: !secret kenteken_auto
@@ -215,7 +215,7 @@ telegram_bot:
   - platform: polling
     api_key: !secret telegram_chat_token
     allowed_chat_ids:
-      - !secret telegram_chat_id
+      - !secret telegram_group_id
 
 vacuum:
   - platform: miio2
