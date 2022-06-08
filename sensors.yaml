@@ -27,11 +27,4 @@
     #   unit_of_measurement: '%'
     #   icon_template: mdi:filter
 
-- platform: mqtt
-  name: Zigbee2mqtt Networkmap
-  state_topic: zigbee2mqtt/bridge/networkmap/raw
-  value_template: >-
-    {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
-  json_attributes_topic: zigbee2mqtt/bridge/networkmap/raw
-
 - platform: dsmr_reader

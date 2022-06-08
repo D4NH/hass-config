@@ -22,10 +22,9 @@ history:
       - updater
     entities:
       - sun.sun
+    entity_globs:
+      - binary_sensor.*_occupancy
 input_boolean:
-  # hikvision_motion_detected:
-  #   name: HikVision - Motion detected
-  #   icon: mdi:eye
 input_datetime:
 input_number:
 input_select:
@@ -34,7 +33,7 @@ input_text:
 # map:
 # media_source:
 # mobile_app:
-# my:
+my:
 network:
 panel_iframe:
   editor:
@@ -44,12 +43,16 @@ panel_iframe:
 person:
 recorder:
   db_url: !secret postgres_url
-  purge_keep_days: 365
+  purge_keep_days: 30
+  commit_interval: 20
   exclude:
     domains:
       - automation
-      - updater
       - light
+      - switch
+      - script
+    entity_globs:
+      - binary_sensor.*_occupancy
     entities:
       - sun.sun
 # scene:
@@ -63,7 +66,6 @@ timer:
 tts:
   - platform: google_translate
 # usb:
-updater:
 webhook:
 zeroconf:
 # zone:
@@ -82,23 +84,21 @@ camera:
     password: !secret hikvision_pwd
     still_image_url: !secret hikvision_image
     stream_source: !secret hikvision_rtsp
+  - platform: xiaomi_cloud_map_extractor
+    host: !secret xiaomi_vacuum_ip
+    token: !secret xiaomi_vacuum_token
+    username: !secret email_address
+    password: !secret xiamo_cloud_pw
+    draw: ['all']
+    auto_update: false
+    attributes:
+      - calibration_points    
 
 binary_sensor:
   - platform: hikvision
     host: !secret hikvision_ip
     username: !secret hikvision_user
     password: !secret hikvision_pwd
-
-fan:
-  - platform: xiaomi_miio_fan
-    name: Xiaomi Smart Fan
-    host: !secret xiaomi_fan_ip
-    token: !secret xiaomi_fan_token
-  - platform: xiaomi_miio_airpurifier
-    name: Mi Air Purifier 3/3H
-    host: !secret xiaomi_purifier_ip
-    token: !secret xiaomi_purifier_token
-    model: zhimi.airpurifier.mb3
 
 google_assistant:
   project_id: hassio-213013
@@ -156,6 +156,18 @@ google_assistant:
       expose: false
     sensor.0x04cf8cdf3c776d8b_temperature:
       expose: false
+    switch.0x04cf8cdf3c776d8b_auto_off:
+      expose: false
+    switch.0x04cf8cdf3c764470_auto_off:
+      expose: false
+    switch.0x04cf8cdf3c764398_auto_off:
+      expose: false
+    light.0x04cd15fffe2cb254:
+      expose: false
+    light.0x04cd15fffe83df37:
+      expose: false
+    light.0x8cf681fffe13f806:
+      expose: false
 
 hacs:
   token: !secret hacs_token
@@ -164,9 +176,8 @@ hacs:
 
 influxdb:
   host: !secret ion_pc_ip
-  exclude:
-    domains:
-      - automation
+  max_retries: 3
+  default_measurement: state
 
 light:
   - platform: group
@@ -175,22 +186,17 @@ light:
       - light.0x14b457fffe9441f3_light
       - light.0xccccccfffe58d568
       - light.0xccccccfffe8abc2f_light
+  - platform: group
+    name: Kidsroom Ceiling Light
+    entities:
+      - light.0x04cd15fffe2cb254
+      - light.0x04cd15fffe83df37
+      - light.0x8cf681fffe13f806
   - platform: xiaomi_miio_philipslight
     name: Xiaomi Philips Downlight
     host: !secret xiaomi_philips_downlight_ip
     token: !secret xiaomi_philips_downlight_token
     model: philips.light.downlight
-      
-mqtt:
-  discovery: true
-  broker: !secret ion_pc_ip
-  port: !secret mqtt_port
-  birth_message:
-    topic: 'hass/status'
-    payload: 'online'
-  will_message:
-    topic: 'hass/status'
-    payload: 'offline'
 
 notify:
   - platform: telegram
