@@ -1,11 +1,11 @@
-mm_on:
-  alias: Turn MM on
-  sequence:
-  - service: shell_command.magic_mirror_on
-mm_off:
-  alias: Turn MM off
-  sequence:
-  - service: shell_command.magic_mirror_off
+# mm_on:
+#   alias: Turn MM on
+#   sequence:
+#   - service: shell_command.magic_mirror_on
+# mm_off:
+#   alias: Turn MM off
+#   sequence:
+#   - service: shell_command.magic_mirror_off
 # soundbar_toggle:
 #   alias: Turn on/off soundbar
 #   sequence:

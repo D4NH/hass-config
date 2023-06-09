@@ -1,8 +1,8 @@
-- platform: template
-  sensors:
-    lg_fridge_door:
-      value_template: >-
-        {% if is_state("binary_sensor.refrigerator_door_open", "off") %}Closed{% else %}Open{% endif %}
+# - platform: template
+#   sensors:
+#     lg_fridge_door:
+#       value_template: >-
+#         {% if is_state("binary_sensor.refrigerator_door_open", "off") %}Closed{% else %}Open{% endif %}
     # airpurifier_aqi:
     #   friendly_name: Air Purifier Air Quality Index
     #   value_template: '{{ states.fan.mi_air_purifier_3_3h.attributes.aqi }}'
@@ -27,4 +27,18 @@
     #   unit_of_measurement: '%'
     #   icon_template: mdi:filter
 
-- platform: dsmr_reader
+- platform: rest
+  name: Tibber prices
+  resource: https://api.tibber.com/v1-beta/gql
+  method: POST
+  scan_interval: 60
+  payload: '{ "query": "{ viewer { homes { currentSubscription { priceInfo { today { total startsAt } tomorrow { total startsAt }}}}}}" }'
+  json_attributes_path: "$.data.viewer.homes[0].currentSubscription.priceInfo"
+  json_attributes:
+    - today
+    - tomorrow
+  value_template: Ok
+  headers:
+    Authorization: !secret tibber_api
+    Content-Type: application/json
+    User-Agent: REST

@@ -1,2 +1,4 @@
-sensor.lg_fridge_door:
-  icon: mdi:fridge
+# sensor.lg_fridge_door:
+#   icon: mdi:fridge
+climate.anna:
+  target_temp_step: 1
